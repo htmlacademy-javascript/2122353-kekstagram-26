@@ -1,10 +1,10 @@
 function getRandom(min, max) {
-  if (min >= max ) {
-    return `Ошибка! минимальное значение ${min} ,  больше максимального ${max}`;
+  if (min < 0 || max < 0) {
+    return null;
   }
 
-  if (min < 0) {
-    return 'Ошибка! Отрицательное число!';
+  if (min > max) {
+    return getRandom(max, min);
   }
 
   min = Math.ceil(min);
