@@ -44,14 +44,14 @@ const getRandomPositiveInteger = (a, b) => {
 const getRandomArrayElement = (elements) =>
   elements[getRandomPositiveInteger(0, elements.length - 1)];
 
-const getComments = (parrentId) => {
+const getComments = () => {
   const items = [];
   const total = getRandomPositiveInteger(1,MAX_COMMENTS_COUNT);
   for(let i = 1; i <= total; i++){
     const randomIndex = getRandomPositiveInteger(0, USERS.length - 1);
     const user = USERS[randomIndex];
     const item = {
-      id:  String(parrentId) + i,
+      id:  Math.floor(Date.now() * Math.random()),
       avatar: `img/avatar-${user.id}.svg`,
       message: getRandomArrayElement(COMMENT_MESSAGES),
       name: user.name
@@ -72,7 +72,7 @@ const getRandomItems = () => {
       url: `photos/${id}.jpg`,
       description: getRandomArrayElement(DESCRIPTIONS),
       likes : getRandomPositiveInteger(15,200),
-      comments : getComments(id)
+      comments : getComments()
     };
 
     items.push(item);
@@ -81,6 +81,3 @@ const getRandomItems = () => {
 
   return items;
 };
-
-const data = getRandomItems();
-console.log(data);
