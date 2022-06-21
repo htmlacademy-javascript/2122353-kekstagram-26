@@ -46,10 +46,10 @@ const getRandomArrayElement = (elements) =>
 
 const getComments = (parrentId) => {
   const items = [];
-  const userId = getRandomPositiveInteger(1,USERS.length);
-  const user = USERS.find((element) => element.id === userId);
   const total = getRandomPositiveInteger(1,MAX_COMMENTS_COUNT);
   for(let i = 1; i <= total; i++){
+    const randomIndex = getRandomPositiveInteger(0, USERS.length - 1);
+    const user = USERS[randomIndex];
     const item = {
       id:  String(parrentId) + i,
       avatar: `img/avatar-${user.id}.svg`,
@@ -83,5 +83,6 @@ const getRandomItems = () => {
   return items;
 };
 
-getRandomItems();
+const result = getRandomItems();
+console.log(result);
 
