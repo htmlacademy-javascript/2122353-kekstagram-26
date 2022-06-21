@@ -32,7 +32,7 @@ const USERS = [
 ];
 
 const ITEMS_COUNT = 25;
-const MAX_COMMENTS_COUNT = 10;
+const MAX_COMMENTS_COUNT = 2;
 
 const getRandomPositiveInteger = (a, b) => {
   const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
@@ -63,12 +63,10 @@ const getComments = (parrentId) => {
 
 const getRandomItems = () => {
   const items = [];
-  while (items.length < ITEMS_COUNT) {
-    const id = getRandomPositiveInteger(1, ITEMS_COUNT);
-    if(items.find((element) => element.id === id)) {
-      continue;
-    }
-
+  const generatedIds = Array.from(Array(ITEMS_COUNT).keys()).map((index) => index + 1);
+  generatedIds.sort((a, b) => 0.2 - Math.random());
+  for(let i = 0; i < generatedIds.length; i++){
+    const id = generatedIds[i];
     const item = {
       id,
       url: `photos/${id}.jpg`,
@@ -80,9 +78,9 @@ const getRandomItems = () => {
     items.push(item);
 
   }
+
   return items;
 };
 
-const result = getRandomItems();
-console.log(result);
-
+const data = getRandomItems();
+console.log(data);
