@@ -1,6 +1,20 @@
-import { showModal, closeModal } from './util.js';
+const showModal = (item) => {
+  if (!item) {
+    return;
+  }
+  item.classList.remove('hidden');
+  document.querySelector('body').classList.add('modal-open');
+};
 
-function uploadPicture() {
+const closeModal = (item) => {
+  if (!item) {
+    return;
+  }
+  item.classList.add('hidden');
+  document.querySelector('body').classList.remove('modal-open');
+};
+
+const uploadPicture = () => {
   const uploadInput = document.getElementById('upload-file');
   const uploadModal = document.querySelector('.img-upload__overlay');
   const closeButton = document.getElementById('upload-cancel');
@@ -47,6 +61,6 @@ function uploadPicture() {
 
     return true;
   });
-}
+};
 
-export { uploadPicture };
+export { uploadPicture, showModal, closeModal };

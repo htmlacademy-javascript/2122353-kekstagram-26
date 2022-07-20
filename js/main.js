@@ -1,7 +1,6 @@
 import { getRandomItems } from './data.js';
 import {drawItemPicture } from './picture.js';
-import { showModal, closeModal } from './util.js';
-import { uploadPicture } from './modul-form.js';
+import { uploadPicture, showModal, closeModal} from './modul-form.js';
 
 const items = getRandomItems();
 const itemsFragment = document.createDocumentFragment();
@@ -12,22 +11,22 @@ items.forEach((item) => {
 
 document.querySelector('.pictures').appendChild(itemsFragment);
 
-const pictures = document.querySelectorAll('.picture');
-pictures.forEach((item) => {
-  item.querySelector('.picture__img').addEventListener('click', () => {
-    showModal(item.querySelector('.big-picture'));
-  });
+let pictureElement;
+document.body.addEventListener('click', (evt) => {
+  if (evt.target.classList.contains('picture__img')) {
+    pictureElement = evt.target.parentElement;
+    showModal(pictureElement.querySelector('.big-picture'));
+  }
 
-  item.querySelector('.big-picture__cancel').addEventListener('click', () => {
-    closeModal(item.querySelector('.big-picture'));
-  });
+  if (evt.target.classList.contains('big-picture__cancel')) {
+    closeModal(pictureElement.querySelector('.big-picture'));
+  }
+});
 
-  document.addEventListener('keydown', (evt) => {
-    if(evt.key === 'Escape') {
-      closeModal(item.querySelector('.big-picture'));
-    }
-  });
-
+document.body.addEventListener('keydown', (evt) => {
+  if (evt.key === 'Escape') {
+    closeModal(pictureElement.querySelector('.big-picture'));
+  }
 });
 
 uploadPicture();

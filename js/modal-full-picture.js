@@ -1,6 +1,6 @@
 const imageModalSection = document.querySelector('.big-picture');
 
-function drawItemModal(item)
+const drawItemModal = (item) =>
 {
   const itemElement = imageModalSection.cloneNode(true);
   itemElement.querySelector('.big-picture__img').querySelector('img').src = item.url;
@@ -28,7 +28,7 @@ function drawItemModal(item)
   itemElement.querySelector('.social__comments').innerHTML = commentsHtml.innerHTML;
 
   return itemElement;
-}
+};
 
 
 export { drawItemModal };
