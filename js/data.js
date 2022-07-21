@@ -36,8 +36,6 @@ const USERS = [
 const ITEMS_COUNT = 25;
 const MAX_COMMENTS_COUNT = 2;
 
-
-
 const getComments = () => {
   const items = [];
   const total = getRandomPositiveInteger(1,MAX_COMMENTS_COUNT);

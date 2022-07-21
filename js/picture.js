@@ -1,6 +1,8 @@
+import { drawItemModal } from './modal-full-picture.js';
+
 const imageTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
-function drawItemPicture(item) {
+const drawItemPicture = (item) => {
   const itemElement = imageTemplate.cloneNode(true);
   itemElement.querySelector('.picture__img').src = item.url;
   itemElement.querySelector('.picture__info')
@@ -9,7 +11,10 @@ function drawItemPicture(item) {
   itemElement.querySelector('.picture__info')
     .querySelector('.picture__comments').textContent = item.comments.length;
 
+  const newDrawModal = drawItemModal(item);
+  itemElement.appendChild(newDrawModal);
+
   return itemElement;
-}
+};
 
 export { drawItemPicture };
