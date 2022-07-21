@@ -1,4 +1,8 @@
+import { drawComment } from './picture.js';
+
 const imageModalSection = document.querySelector('.big-picture');
+
+const COMMENT_VIEW_DEFAULT_COUNT = 5;
 
 const drawItemModal = (item) =>
 {
@@ -7,20 +11,19 @@ const drawItemModal = (item) =>
   itemElement.querySelector('.likes-count').textContent = item.likes;
   itemElement.querySelector('.comments-count').textContent = item.comments.length;
   itemElement.querySelector('.social__caption').textContent = item.description;
+  itemElement.querySelector('.big-picture__social').id = item.id;
   // исправила косяк верстальсщика
   itemElement.querySelector('.social__caption').style.lineHeight = '1.5';
-  itemElement.querySelector('.social__comment-count').classList.add('hidden');
-  itemElement.querySelector('.comments-loader').classList.add('hidden');
 
+  if (item.comments.length <= COMMENT_VIEW_DEFAULT_COUNT) {
+    itemElement.querySelector('.social__comment-count').classList.add('hidden');
+    itemElement.querySelector('.comments-loader').classList.add('hidden');
+  }
 
   const commentsHtml = document.createElement('div');
-
-  item.comments.forEach((comment) => {
-    const commentLi = itemElement.querySelector('.social__comment').cloneNode(true);
-    commentLi.querySelector('.social__picture').src = comment.avatar;
-    commentLi.querySelector('.social__picture').alt = comment.name;
-    commentLi.querySelector('.social__text').textContent = comment.message;
-    commentLi.querySelector('.social__text').style.lineHeight = '1.5';
+  const sliceComments = item.comments.slice(0, COMMENT_VIEW_DEFAULT_COUNT);
+  sliceComments.forEach((element) => {
+    const commentLi = drawComment(itemElement, element);
     commentsHtml.appendChild(commentLi);
   });
 
@@ -31,4 +34,4 @@ const drawItemModal = (item) =>
 };
 
 
-export { drawItemModal };
+export { drawItemModal, COMMENT_VIEW_DEFAULT_COUNT };
