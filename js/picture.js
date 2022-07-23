@@ -1,9 +1,9 @@
 import { drawItemModal } from './modal-full-picture.js';
 
-const imageTemplate = document.querySelector('#picture').content.querySelector('.picture');
+const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
 const drawItemPicture = (item) => {
-  const itemElement = imageTemplate.cloneNode(true);
+  const itemElement = pictureTemplate.cloneNode(true);
   itemElement.querySelector('.picture__img').src = item.url;
   itemElement.querySelector('.picture__info')
     .querySelector('.picture__likes').textContent = item.likes;

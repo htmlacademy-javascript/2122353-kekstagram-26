@@ -1,7 +1,20 @@
+import { removeEffect, setScaleDefaultValue, setPictureTransform } from './effects.js';
+import { sendFormDataToApi } from './data.js';
+
+const uploadInput = document.getElementById('upload-file');
+const uploadModal = document.querySelector('.img-upload__overlay');
+const closeButton = document.getElementById('upload-cancel');
+const form = document.getElementById('upload-select-image');
+const textArea = document.querySelector('.text__description');
+const errorsDiv = document.querySelector('.errors');
+const preview = document.querySelector('.img-upload__preview');
+const picture = preview.querySelector('img');
+
 const showModal = (item) => {
   if (!item) {
     return;
   }
+
   item.classList.remove('hidden');
   document.querySelector('body').classList.add('modal-open');
 };
@@ -10,40 +23,66 @@ const closeModal = (item) => {
   if (!item) {
     return;
   }
+
   item.classList.add('hidden');
   document.querySelector('body').classList.remove('modal-open');
 };
 
-const uploadPicture = () => {
-  const uploadInput = document.getElementById('upload-file');
-  const uploadModal = document.querySelector('.img-upload__overlay');
-  const closeButton = document.getElementById('upload-cancel');
-  const form = document.getElementById('upload-select-image');
-  const textArea = document.querySelector('.text__description');
-  const errorsDiv = document.querySelector('.errors');
+const picturePreview = (input) => {
+  const [file] = input.files;
+  if (!file) {
+    return;
+  }
 
+  picture.src = URL.createObjectURL(file);
+};
+
+const formReset = () => {
+  closeModal(uploadModal);
+  form.reset();
+  removeEffect(picture);
+  setScaleDefaultValue();
+  setPictureTransform(1);
+};
+
+const uploadPicture = () => {
   uploadInput.addEventListener('change', () => {
+    picturePreview(uploadInput);
+    setScaleDefaultValue();
     showModal(uploadModal);
   });
 
-  closeButton.addEventListener('click', () => {
+  const onSuccess = (response) => {
     closeModal(uploadModal);
-    uploadInput.value = '';
-  });
+    if (response.status !== 200) {
+      throw new Error('Server error');
+    }
+
+    formReset();
+    const successTemplate = document.querySelector('#success').content.querySelector('.success');
+    const itemElement = successTemplate.cloneNode(true);
+    document.body.appendChild(itemElement);
+  };
+
+  const onError = () => {
+    const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+    const itemElement = errorTemplate.cloneNode(true);
+    document.body.appendChild(itemElement);
+  };
+
+  closeButton.addEventListener('click', () => formReset());
 
   document.addEventListener('keydown', (evt) => {
     // Добавляем чтоб убрать второй скролл
     document.querySelector('body').classList.add('modal-open');
     if(evt.key === 'Escape' && textArea !== document.activeElement) {
-      closeModal(uploadModal);
-      uploadInput.value = '';
+      formReset();
     }
   });
 
   form.addEventListener('submit', (evt) => {
     evt.preventDefault();
     errorsDiv.innerHTML = '';
-
     textArea.style.borderWidth = '1px';
     textArea.style.borderColor = 'black';
 
@@ -59,7 +98,8 @@ const uploadPicture = () => {
       return false;
     }
 
-    return true;
+    const formData = new FormData(evt.target);
+    sendFormDataToApi(formData, onSuccess, onError);
   });
 };
 
