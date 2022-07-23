@@ -23,23 +23,29 @@ const setScaleDefaultValue = () => {
 
 const getScaleCurrentValue = () => {
   const currentValue = document.querySelector('.scale__control--value').value;
-  return Number(currentValue.slice(0, -1));
+  return parseInt(currentValue, 10);
 };
+
 const setPictureTransform = (scale) => {
   document.querySelector('.img-upload__preview').style.transform = `scale(${scale})`;
 };
 
-const changeScaleValue = (lower = true) => {
+const lowerScaleValue = () => {
   const currentValue = getScaleCurrentValue();
   let value = currentValue;
-  if (lower === true) {
-    if (currentValue > MIN_SCALE_VALUE) {
-      value = currentValue - DEFAULT_SCALE_VALUE_STEP;
-    }
-  } else {
-    if (currentValue < MAX_SCALE_VALUE) {
-      value = currentValue + DEFAULT_SCALE_VALUE_STEP;
-    }
+  if (currentValue > MIN_SCALE_VALUE) {
+    value = currentValue - DEFAULT_SCALE_VALUE_STEP;
+  }
+
+  setScaleValue(`${value}%`);
+  setPictureTransform(value / 100);
+};
+
+const increaseScaleValue = () => {
+  const currentValue = getScaleCurrentValue();
+  let value = currentValue;
+  if (currentValue < MAX_SCALE_VALUE) {
+    value = currentValue + DEFAULT_SCALE_VALUE_STEP;
   }
 
   setScaleValue(`${value}%`);
@@ -56,4 +62,4 @@ const changeFilter = (effect) => {
   picture.classList.add(`effects__preview--${effect}`);
 };
 
-export { setScaleDefaultValue, changeScaleValue, changeFilter };
+export { setScaleDefaultValue, increaseScaleValue, lowerScaleValue, changeFilter };
