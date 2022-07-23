@@ -1,9 +1,7 @@
+import { config } from './config.js';
 import { drawComment } from './picture.js';
 
 const imageModalSection = document.querySelector('.big-picture');
-
-const COMMENT_VIEW_DEFAULT_COUNT = 5;
-
 const drawItemModal = (item) =>
 {
   const itemElement = imageModalSection.cloneNode(true);
@@ -15,13 +13,17 @@ const drawItemModal = (item) =>
   // исправила косяк верстальсщика
   itemElement.querySelector('.social__caption').style.lineHeight = '1.5';
 
-  if (item.comments.length <= COMMENT_VIEW_DEFAULT_COUNT) {
+  if (item.comments.length <= config.fullPicture.commentViewDefaultCount) {
     itemElement.querySelector('.social__comment-count').classList.add('hidden');
     itemElement.querySelector('.comments-loader').classList.add('hidden');
   }
 
   const commentsHtml = document.createElement('div');
-  const sliceComments = item.comments.slice(0, COMMENT_VIEW_DEFAULT_COUNT);
+  const sliceComments = item.comments.slice(
+    0,
+    config.fullPicture.commentViewDefaultCount
+  );
+
   sliceComments.forEach((element) => {
     const commentLi = drawComment(itemElement, element);
     commentsHtml.appendChild(commentLi);
@@ -33,5 +35,33 @@ const drawItemModal = (item) =>
   return itemElement;
 };
 
+const showMoreComments = (parentElement, items) => {
+  const pictureId = Number(parentElement.id);
+  if (!pictureId) {
+    return;
+  }
 
-export { drawItemModal, COMMENT_VIEW_DEFAULT_COUNT };
+  const currentCommentsCountObject = parentElement.querySelector('.current-comments-count');
+  let currentComments = Number(currentCommentsCountObject.textContent);
+  const comments = items.find((picture) => picture.id === pictureId).comments;
+  const allCommentsCount = comments.length;
+  const sliceComments = comments.slice(currentComments, currentComments + config.fullPicture.commentViewDefaultCount);
+  const fragment = document.createDocumentFragment();
+
+  sliceComments.forEach((element) => {
+    const commentLi = drawComment(parentElement, element);
+    fragment.appendChild(commentLi);
+    currentComments += 1;
+  });
+
+  parentElement.querySelector('.social__comments').appendChild(fragment);
+
+  if (allCommentsCount <= currentComments) {
+    parentElement.querySelector('.comments-loader').classList.add('hidden');
+  }
+
+  parentElement.querySelector('.current-comments-count').textContent = currentComments;
+};
+
+
+export { drawItemModal, showMoreComments };
