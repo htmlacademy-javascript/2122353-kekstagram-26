@@ -34,7 +34,7 @@ const USERS = [
 ];
 
 const ITEMS_COUNT = 25;
-const MAX_COMMENTS_COUNT = 2;
+const MAX_COMMENTS_COUNT = 10;
 
 const getComments = () => {
   const items = [];

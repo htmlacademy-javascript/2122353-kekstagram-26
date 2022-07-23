@@ -17,4 +17,13 @@ const drawItemPicture = (item) => {
   return itemElement;
 };
 
-export { drawItemPicture };
+const drawComment = (itemElement, comment) => {
+  const commentLi = itemElement.querySelector('.social__comment').cloneNode(true);
+  commentLi.querySelector('.social__picture').src = comment.avatar;
+  commentLi.querySelector('.social__picture').alt = comment.name;
+  commentLi.querySelector('.social__text').textContent = comment.message;
+  commentLi.querySelector('.social__text').style.lineHeight = '1.5';
+  return commentLi;
+};
+
+export { drawItemPicture, drawComment };
