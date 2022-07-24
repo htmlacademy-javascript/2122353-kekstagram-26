@@ -1,31 +1,16 @@
 
-const DEFAULT_SCALE_VALUE = 100;
-const DEFAULT_SCALE_VALUE_STEP = 25;
-const MAX_SCALE_VALUE = 100;
-const MIN_SCALE_VALUE = 25;
+import { config } from './config.js';
 
-const effects = [
-  'none',
-  'chrome',
-  'sepia',
-  'marvin',
-  'phobos',
-  'heat',
-];
-
+const scaleControlValue = document.querySelector('.scale__control--value');
 const setScaleValue = (value) => {
-  document.querySelector('.scale__control--value').value = value;
+  scaleControlValue.value = value;
 };
 
 const setScaleDefaultValue = () => {
-  setScaleValue(`${DEFAULT_SCALE_VALUE}%`);
+  setScaleValue(`${config.effects.defaultScaleValue}%`);
 };
 
-const getScaleCurrentValue = () => {
-  const currentValue = document.querySelector('.scale__control--value').value;
-  return parseInt(currentValue, 10);
-};
-
+const getScaleCurrentValue = () => parseInt(scaleControlValue.value, 10);
 const setPictureTransform = (scale) => {
   document.querySelector('.img-upload__preview').style.transform = `scale(${scale})`;
 };
@@ -33,8 +18,8 @@ const setPictureTransform = (scale) => {
 const lowerScaleValue = () => {
   const currentValue = getScaleCurrentValue();
   let value = currentValue;
-  if (currentValue > MIN_SCALE_VALUE) {
-    value = currentValue - DEFAULT_SCALE_VALUE_STEP;
+  if (currentValue > config.effects.minScaleValue) {
+    value = currentValue - config.effects.defaultScaleValueStep;
   }
 
   setScaleValue(`${value}%`);
@@ -44,22 +29,34 @@ const lowerScaleValue = () => {
 const increaseScaleValue = () => {
   const currentValue = getScaleCurrentValue();
   let value = currentValue;
-  if (currentValue < MAX_SCALE_VALUE) {
-    value = currentValue + DEFAULT_SCALE_VALUE_STEP;
+  if (currentValue < config.effects.maxScaleValue) {
+    value = currentValue + config.effects.defaultScaleValueStep;
   }
 
   setScaleValue(`${value}%`);
   setPictureTransform(value / 100);
 };
 
+const removeEffect = (picture) => {
+  config.effects.values.forEach((item) => picture.classList.remove(`effects__preview--${item}`));
+};
+
 const changeFilter = (effect) => {
-  if (!effects.includes(effect)) {
+  if (!config.effects.values.includes(effect)) {
     return;
   }
+
   const preview = document.querySelector('.img-upload__preview');
   const picture = preview.querySelector('img');
-  effects.forEach((item) => picture.classList.remove(`effects__preview--${item}`));
+  removeEffect(picture);
   picture.classList.add(`effects__preview--${effect}`);
 };
 
-export { setScaleDefaultValue, increaseScaleValue, lowerScaleValue, changeFilter };
+export {
+  setScaleDefaultValue,
+  increaseScaleValue,
+  lowerScaleValue,
+  changeFilter,
+  removeEffect,
+  setPictureTransform,
+};

@@ -1,77 +1,30 @@
-import { getRandomPositiveInteger, getRandomArrayElement } from './util.js';
+import { config } from './config.js';
 
-const DESCRIPTIONS = [
-  'Супер!',
-  'У бабушки.',
-  'Жизнь моя жизнь.',
-  'Моя бабушка случайно чихнула с фотоаппаратом в руках.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат.',
-  'Как можно было поймать такой неудачный момент?!'
-];
-
-const COMMENT_MESSAGES = [
-  'Всё отлично!',
-  'В целом всё неплохо. Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
-];
-
-const USERS = [
-  {name:'Иван',
-    id: 1},
-  {name:'Хуан',
-    id: 2},
-  {name:'Мария',
-    id: 3},
-  {name:'Кристоф',
-    id: 4},
-  {name:'Виктор',
-    id: 5},
-  {name:'Юлия',
-    id: 6},
-];
-
-const ITEMS_COUNT = 25;
-const MAX_COMMENTS_COUNT = 10;
-
-const getComments = () => {
-  const items = [];
-  const total = getRandomPositiveInteger(1,MAX_COMMENTS_COUNT);
-  for(let i = 1; i <= total; i++){
-    const randomIndex = getRandomPositiveInteger(0, USERS.length - 1);
-    const user = USERS[randomIndex];
-    const item = {
-      id:  Math.floor(Date.now() * Math.random()),
-      avatar: `img/avatar-${user.id}.svg`,
-      message: getRandomArrayElement(COMMENT_MESSAGES),
-      name: user.name
-    };
-    items.push(item);
+const getDataFromApi = async () =>  {
+  const response = await fetch(config.getData.url, {
+    method: 'GET',
+    headers: config.getData.headers,
+    cors: 'no-cors'
+  });
+  if (response.status === 200) {
+    return response.json();
   }
-  return items;
+  const error = await response.json();
+  const e = new Error('Something went wrong');
+  e.data = error;
+  throw e;
 };
 
-const getRandomItems = () => {
-  const items = [];
-  const generatedIds = Array.from(Array(ITEMS_COUNT).keys()).map((index) => index + 1);
-  generatedIds.sort((a, b) => 0.2 - Math.random());
-  for(let i = 0; i < generatedIds.length; i++){
-    const id = generatedIds[i];
-    const item = {
-      id,
-      url: `photos/${id}.jpg`,
-      description: getRandomArrayElement(DESCRIPTIONS),
-      likes : getRandomPositiveInteger(15,200),
-      comments : getComments()
-    };
-
-    items.push(item);
-
-  }
-
-  return items;
+const sendFormDataToApi = (formData, onSuccess, onError) => {
+  fetch(
+    config.sendData.url,
+    {
+      method: 'POST',
+      body: formData,
+      cors: 'no-cors',
+    },
+  ).then((response) => onSuccess(response))
+    .catch(() => onError());
 };
 
-export { getRandomItems };
+export { getDataFromApi, sendFormDataToApi };
