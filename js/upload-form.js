@@ -1,5 +1,5 @@
-import { removeEffect, setScaleDefaultValue, setPictureTransform } from './effects.js';
-import { sendFormDataToApi } from './data.js';
+import { removeEffect, setScaleDefaultValue, setPictureTransform } from './picture-effects.js';
+import { sendFormDataToApi } from './api.js';
 
 const uploadInput = document.getElementById('upload-file');
 const uploadModal = document.querySelector('.img-upload__overlay');
@@ -45,41 +45,25 @@ const formReset = () => {
   setPictureTransform(1);
 };
 
-const uploadPicture = () => {
-  uploadInput.addEventListener('change', () => {
-    picturePreview(uploadInput);
-    setScaleDefaultValue();
-    showModal(uploadModal);
-  });
+const onSuccess = (response) => {
+  closeModal(uploadModal);
+  if (response.status !== 200) {
+    throw new Error('Server error');
+  }
 
-  const onSuccess = (response) => {
-    closeModal(uploadModal);
-    if (response.status !== 200) {
-      throw new Error('Server error');
-    }
+  formReset();
+  const successTemplate = document.querySelector('#success').content.querySelector('.success');
+  const itemElement = successTemplate.cloneNode(true);
+  document.body.appendChild(itemElement);
+};
 
-    formReset();
-    const successTemplate = document.querySelector('#success').content.querySelector('.success');
-    const itemElement = successTemplate.cloneNode(true);
-    document.body.appendChild(itemElement);
-  };
+const onError = () => {
+  const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  const itemElement = errorTemplate.cloneNode(true);
+  document.body.appendChild(itemElement);
+};
 
-  const onError = () => {
-    const errorTemplate = document.querySelector('#error').content.querySelector('.error');
-    const itemElement = errorTemplate.cloneNode(true);
-    document.body.appendChild(itemElement);
-  };
-
-  closeButton.addEventListener('click', () => formReset());
-
-  document.addEventListener('keydown', (evt) => {
-    // Добавляем чтоб убрать второй скролл
-    document.querySelector('body').classList.add('modal-open');
-    if(evt.key === 'Escape' && textArea !== document.activeElement) {
-      formReset();
-    }
-  });
-
+const addFormSubmitEvent = () => {
   form.addEventListener('submit', (evt) => {
     evt.preventDefault();
     errorsDiv.innerHTML = '';
@@ -101,6 +85,31 @@ const uploadPicture = () => {
     const formData = new FormData(evt.target);
     sendFormDataToApi(formData, onSuccess, onError);
   });
+};
+
+const uploadPicture = () => {
+  uploadInput.addEventListener('change', () => {
+    picturePreview(uploadInput);
+    setScaleDefaultValue();
+    showModal(uploadModal);
+    addFormSubmitEvent();
+  });
+
+  closeButton.addEventListener('click', () => {
+    formReset();
+    form.removeEventListener('submit');
+  });
+
+  document.addEventListener('keydown', (evt) => {
+    // Добавляем чтоб убрать второй скролл
+    document.querySelector('body').classList.add('modal-open');
+    if(evt.key === 'Escape' && textArea !== document.activeElement) {
+      formReset();
+      form.removeEventListener('submit');
+    }
+  });
+
+
 };
 
 export { uploadPicture, showModal, closeModal };
