@@ -1,10 +1,10 @@
-import { showModal, closeModal } from './modul-form.js';
+import { showModal, closeModal } from './upload-form.js';
 import { showMoreComments } from './modal-full-picture.js';
 import {
   increaseScaleValue,
   lowerScaleValue,
   changeFilter,
-} from './effects.js';
+} from './picture-effects.js';
 
 const initEvents = (items) => {
   let pictureElement;

@@ -1,7 +1,7 @@
-import { getDataFromApi } from './data.js';
+import { getDataFromApi } from './api.js';
 import {drawItemPicture } from './picture.js';
-import { uploadPicture } from './modul-form.js';
-import { setScaleDefaultValue } from './effects.js';
+import { uploadPicture } from './upload-form.js';
+import { setScaleDefaultValue } from './picture-effects.js';
 import { initEvents } from './events.js';
 
 (async () => {
