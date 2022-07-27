@@ -10,22 +10,28 @@ const errorsDiv = document.querySelector('.errors');
 const preview = document.querySelector('.img-upload__preview');
 const picture = preview.querySelector('img');
 
-const showModal = (item) => {
+const showModal = (item, callback = null) => {
   if (!item) {
     return;
   }
 
   item.classList.remove('hidden');
   document.querySelector('body').classList.add('modal-open');
+  if (typeof callback === 'function') {
+    callback();
+  }
 };
 
-const closeModal = (item) => {
+const closeModal = (item, callback = null) => {
   if (!item) {
     return;
   }
 
   item.classList.add('hidden');
   document.querySelector('body').classList.remove('modal-open');
+  if (typeof callback === 'function') {
+    callback();
+  }
 };
 
 const picturePreview = (input) => {
@@ -84,32 +90,27 @@ const addFormSubmitEvent = () => {
 
     const formData = new FormData(evt.target);
     sendFormDataToApi(formData, onSuccess, onError);
-  });
-};
-
-const uploadPicture = () => {
-  uploadInput.addEventListener('change', () => {
-    picturePreview(uploadInput);
-    setScaleDefaultValue();
-    showModal(uploadModal);
-    addFormSubmitEvent();
-  });
+  }, { once: true });
 
   closeButton.addEventListener('click', () => {
     formReset();
-    form.removeEventListener('submit');
-  });
+  }, { once: true });
 
   document.addEventListener('keydown', (evt) => {
     // Добавляем чтоб убрать второй скролл
     document.querySelector('body').classList.add('modal-open');
     if(evt.key === 'Escape' && textArea !== document.activeElement) {
       formReset();
-      form.removeEventListener('submit');
     }
+  }, { once: true });
+};
+
+const uploadPicture = () => {
+  uploadInput.addEventListener('change', () => {
+    picturePreview(uploadInput);
+    setScaleDefaultValue();
+    showModal(uploadModal, addFormSubmitEvent);
   });
-
-
 };
 
 export { uploadPicture, showModal, closeModal };
