@@ -2,40 +2,40 @@ import { config } from './config.js';
 import { drawComment } from './picture.js';
 
 const imageModalSection = document.querySelector('.big-picture');
-const drawItemModal = (item) =>
+const drawItemModal = (post) =>
 {
-  const itemElement = imageModalSection.cloneNode(true);
-  itemElement.querySelector('.big-picture__img').querySelector('img').src = item.url;
-  itemElement.querySelector('.likes-count').textContent = item.likes;
-  itemElement.querySelector('.comments-count').textContent = item.comments.length;
-  itemElement.querySelector('.social__caption').textContent = item.description;
-  itemElement.querySelector('.big-picture__social').id = item.id;
+  const element = imageModalSection.cloneNode(true);
+  element.querySelector('.big-picture__img').querySelector('img').src = post.url;
+  element.querySelector('.likes-count').textContent = post.likes;
+  element.querySelector('.comments-count').textContent = post.comments.length;
+  element.querySelector('.social__caption').textContent = post.description;
+  element.querySelector('.big-picture__social').id = post.id;
   // исправила косяк верстальсщика
-  itemElement.querySelector('.social__caption').style.lineHeight = '1.5';
+  element.querySelector('.social__caption').style.lineHeight = '1.5';
 
-  if (item.comments.length <= config.fullPicture.commentViewDefaultCount) {
-    itemElement.querySelector('.social__comment-count').classList.add('hidden');
-    itemElement.querySelector('.comments-loader').classList.add('hidden');
+  if (post.comments.length <= config.fullPicture.commentViewDefaultCount) {
+    element.querySelector('.social__comment-count').classList.add('hidden');
+    element.querySelector('.comments-loader').classList.add('hidden');
   }
 
   const commentsHtml = document.createElement('div');
-  const sliceComments = item.comments.slice(
+  const sliceComments = post.comments.slice(
     0,
     config.fullPicture.commentViewDefaultCount
   );
 
-  sliceComments.forEach((element) => {
-    const commentLi = drawComment(itemElement, element);
+  sliceComments.forEach((comment) => {
+    const commentLi = drawComment(element, comment);
     commentsHtml.appendChild(commentLi);
   });
 
-  itemElement.querySelector('.social__comments').textContent = '';
-  itemElement.querySelector('.social__comments').innerHTML = commentsHtml.innerHTML;
+  element.querySelector('.social__comments').textContent = '';
+  element.querySelector('.social__comments').innerHTML = commentsHtml.innerHTML;
 
-  return itemElement;
+  return element;
 };
 
-const showMoreComments = (parentElement, items) => {
+const showMoreComments = (parentElement, posts) => {
   const pictureId = Number(parentElement.id);
   if (!pictureId) {
     return;
@@ -43,12 +43,12 @@ const showMoreComments = (parentElement, items) => {
 
   const currentCommentsCountObject = parentElement.querySelector('.current-comments-count');
   let currentComments = Number(currentCommentsCountObject.textContent);
-  const comments = items.find((picture) => picture.id === pictureId).comments;
+  const comments = posts.find((picture) => picture.id === pictureId).comments;
   const allCommentsCount = comments.length;
-  const sliceComments = comments.slice(currentComments, currentComments + config.fullPicture.commentViewDefaultCount);
+  const slicedComments = comments.slice(currentComments, currentComments + config.fullPicture.commentViewDefaultCount);
   const fragment = document.createDocumentFragment();
 
-  sliceComments.forEach((element) => {
+  slicedComments.forEach((element) => {
     const commentLi = drawComment(parentElement, element);
     fragment.appendChild(commentLi);
     currentComments += 1;

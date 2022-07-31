@@ -2,16 +2,16 @@ import { drawItemModal } from './modal-full-picture.js';
 
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
-const drawItemPicture = (item) => {
+const drawItemPicture = (post) => {
   const itemElement = pictureTemplate.cloneNode(true);
-  itemElement.querySelector('.picture__img').src = item.url;
+  itemElement.querySelector('.picture__img').src = post.url;
   itemElement.querySelector('.picture__info')
-    .querySelector('.picture__likes').textContent = item.likes;
+    .querySelector('.picture__likes').textContent = post.likes;
 
   itemElement.querySelector('.picture__info')
-    .querySelector('.picture__comments').textContent = item.comments.length;
+    .querySelector('.picture__comments').textContent = post.comments.length;
 
-  const newDrawModal = drawItemModal(item);
+  const newDrawModal = drawItemModal(post);
   itemElement.appendChild(newDrawModal);
 
   return itemElement;

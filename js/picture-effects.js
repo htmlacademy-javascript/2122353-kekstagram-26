@@ -12,7 +12,7 @@ const setScaleDefaultValue = () => {
 
 const getScaleCurrentValue = () => parseInt(scaleControlValue.value, 10);
 const setPictureTransform = (scale) => {
-  document.querySelector('.img-upload__preview').style.transform = `scale(${scale})`;
+  document.querySelector('.img-upload__preview > img').style.transform = `scale(${scale})`;
 };
 
 const lowerScaleValue = () => {
@@ -26,7 +26,7 @@ const lowerScaleValue = () => {
   setPictureTransform(value / 100);
 };
 
-const increaseScaleValue = () => {
+const upperScaleValue = () => {
   const currentValue = getScaleCurrentValue();
   let value = currentValue;
   if (currentValue < config.effects.maxScaleValue) {
@@ -54,7 +54,7 @@ const changeFilter = (effect) => {
 
 export {
   setScaleDefaultValue,
-  increaseScaleValue,
+  upperScaleValue,
   lowerScaleValue,
   changeFilter,
   removeEffect,
