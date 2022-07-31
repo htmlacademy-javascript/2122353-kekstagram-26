@@ -1,25 +1,40 @@
-import { showModal, closeModal } from './upload-form.js';
+import { showModal, closeModal, closeSuccessTemplate, closeErrorTemplate } from './upload-form.js';
 import { showMoreComments } from './modal-full-picture.js';
 import {
-  increaseScaleValue,
+  upperScaleValue,
   lowerScaleValue,
   changeFilter,
 } from './picture-effects.js';
 
-const initEvents = (items) => {
+const initEvents = (posts) => {
   let pictureElement;
+
+  const onModalOpen = () => {
+    document.body.addEventListener('keydown', handleKeydown);
+  };
+
+  const onModalClose = () => {
+    document.body.removeEventListener('keydown', handleKeydown);
+  };
+
+  const handleKeydown = (evt) => {
+    if (evt.key === 'Escape') {
+      closeModal(pictureElement.querySelector('.big-picture'), onModalClose);
+    }
+  };
+
   document.body.addEventListener('click', (evt) => {
     if (evt.target.classList.contains('picture__img')) {
       pictureElement = evt.target.parentElement;
-      showModal(pictureElement.querySelector('.big-picture'));
+      showModal(pictureElement.querySelector('.big-picture'), onModalOpen);
     }
 
     if (evt.target.classList.contains('big-picture__cancel')) {
-      closeModal(pictureElement.querySelector('.big-picture'));
+      closeModal(pictureElement.querySelector('.big-picture', onModalClose));
     }
 
     if (evt.target.classList.contains('social__comments-loader')) {
-      showMoreComments(evt.target.parentElement, items);
+      showMoreComments(evt.target.parentElement, posts);
     }
 
     if (evt.target.classList.contains('scale__control--smaller')) {
@@ -27,7 +42,7 @@ const initEvents = (items) => {
     }
 
     if (evt.target.classList.contains('scale__control--bigger')) {
-      increaseScaleValue();
+      upperScaleValue();
     }
 
     if (evt.target.classList.contains('effects__radio')) {
@@ -37,20 +52,13 @@ const initEvents = (items) => {
     if (document.querySelector('.success')
       && evt.target.classList.contains('success')
       || evt.target.classList.contains('success__button')) {
-      document.querySelector('.success').remove();
+      closeSuccessTemplate();
     }
 
     if (document.querySelector('.error')
     && evt.target.classList.contains('error')
     || evt.target.classList.contains('error__button')) {
-      document.querySelector('.error').remove();
-    }
-
-  });
-
-  document.body.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
-      closeModal(pictureElement.querySelector('.big-picture'));
+      closeErrorTemplate();
     }
   });
 };
