@@ -2,8 +2,7 @@ import { config } from './config.js';
 import { drawComment } from './picture.js';
 
 const imageModalSection = document.querySelector('.big-picture');
-const drawItemModal = (post) =>
-{
+const drawItemModal = (post) => {
   const element = imageModalSection.cloneNode(true);
   element.querySelector('.big-picture__img').querySelector('img').src = post.url;
   element.querySelector('.likes-count').textContent = post.likes;
@@ -30,12 +29,12 @@ const drawItemModal = (post) =>
   });
 
   element.querySelector('.social__comments').textContent = '';
-  element.querySelector('.social__comments').innerHTML = commentsHtml.innerHTML;
+  element.querySelector('.social__comments').appendChild(commentsHtml);
 
   return element;
 };
 
-const showMoreComments = (parentElement, posts) => {
+const showMoreComments = (parentElement, posts = []) => {
   const pictureId = Number(parentElement.id);
   if (!pictureId) {
     return;

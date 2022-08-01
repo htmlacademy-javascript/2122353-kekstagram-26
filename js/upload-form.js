@@ -20,7 +20,6 @@ const showModal = (item, callback = () => null) => {
 
   item.classList.remove('hidden');
   document.querySelector('body').classList.add('modal-open');
-
   callback();
 };
 
@@ -31,70 +30,16 @@ const closeModal = (item, callback = () => null) => {
 
   item.classList.add('hidden');
   document.querySelector('body').classList.remove('modal-open');
-
   callback();
 };
 
-const picturePreview = (input) => {
+const setPicture = (input) => {
   const [file] = input.files;
   if (!file) {
     return;
   }
 
   picture.src = URL.createObjectURL(file);
-};
-
-const resetForm = () => {
-  form.reset();
-  removeEffect(picture);
-  setScaleDefaultValue();
-  setPictureTransform(1);
-  removeFormListeners();
-};
-
-const showSuccessTemplate = () => {
-  const successTemplate = document.querySelector('#success').content.querySelector('.success');
-  const itemElement = successTemplate.cloneNode(true);
-  document.body.appendChild(itemElement);
-  document.body.addEventListener('keydown', handleModalKeydown);
-;}
-
-const showErrorTemplate = () => {
-  const errorTemplate = document.querySelector('#error').content.querySelector('.error');
-  const itemElement = errorTemplate.cloneNode(true);
-  itemElement.style.zIndex = 2;
-  document.body.appendChild(itemElement);
-  document.body.addEventListener('keydown', handleModalKeydown);
-};
-
-const closeSuccessTemplate = () => {
-  document.querySelector('.success').remove();
-  document.body.removeEventListener('keydown', handleModalKeydown);
-};
-
-const closeErrorTemplate = () => {
-  document.querySelector('.error').remove();
-  document.body.removeEventListener('keydown', handleModalKeydown);
-};
-
-const onSuccess = (response) => {
-  closeModal(uploadModal, resetForm);
-  if (response.status !== 200) {
-    throw new Error('Server error');
-  }
-
-  showSuccessTemplate();
-};
-
-const onError = () => {
-  showErrorTemplate();
-};
-
-
-const handleFormKeydown = (evt) => {
-  if(evt.key === 'Escape' && textArea !== document.activeElement) {
-    closeModal(uploadModal, resetForm);
-  }
 };
 
 const handleModalKeydown = (evt) => {
@@ -109,9 +54,57 @@ const handleModalKeydown = (evt) => {
   }
 };
 
+const showSuccessTemplate = () => {
+  const successTemplate = document.querySelector('#success').content.querySelector('.success');
+  const itemElement = successTemplate.cloneNode(true);
+  document.body.appendChild(itemElement);
+  document.body.addEventListener('keydown', handleModalKeydown);
+};
+
+const showErrorTemplate = () => {
+  const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  const itemElement = errorTemplate.cloneNode(true);
+  itemElement.style.zIndex = 2;
+  document.body.appendChild(itemElement);
+  document.body.addEventListener('keydown', handleModalKeydown);
+};
+
+function closeSuccessTemplate() {
+  document.querySelector('.success').remove();
+  document.body.removeEventListener('keydown', handleModalKeydown);
+}
+
+function closeErrorTemplate() {
+  document.querySelector('.error').remove();
+  document.body.removeEventListener('keydown', handleModalKeydown);
+}
+
+const handleFormClosing = () => {
+  closeModal(uploadModal, resetForm);
+};
+
+const onSuccess = (response) => {
+  closeModal(uploadModal, resetForm);
+  if (response.status !== 200) {
+    throw new Error('Server error');
+  }
+
+  showSuccessTemplate();
+};
+
+const handleFormKeydown = (evt) => {
+  if(evt.key === 'Escape' && textArea !== document.activeElement) {
+    closeModal(uploadModal, resetForm);
+  }
+};
+
+const onError = () => {
+  showErrorTemplate();
+};
+
 const handleFormSubmit = (evt) => {
   evt.preventDefault();
-  errorsDiv.innerHTML = '';
+  errorsDiv.textContent = '';
   textArea.style.borderWidth = '1px';
   textArea.style.borderColor = 'black';
 
@@ -121,7 +114,7 @@ const handleFormSubmit = (evt) => {
     const span = document.createElement('span');
     span.style.display = 'block';
     span.style.color = 'red';
-    span.innerHTML = `Максимальное колличество символов = ${DESCRIPTION_MAX_LENGTH}, у вас ${textArea.value.length}`;
+    span.textContent = `Максимальное колличество символов = ${DESCRIPTION_MAX_LENGTH}, у вас ${textArea.value.length}`;
     errorsDiv.appendChild(span);
 
     return false;
@@ -133,19 +126,27 @@ const handleFormSubmit = (evt) => {
 
 const addFormListeners = () => {
   form.addEventListener('submit', handleFormSubmit);
-  closeButton.addEventListener('click', resetForm);
+  closeButton.addEventListener('click', handleFormClosing);
   document.addEventListener('keydown', handleFormKeydown);
 };
 
 const removeFormListeners = () => {
   form.removeEventListener('submit', handleFormSubmit);
-  closeButton.removeEventListener('click', resetForm);
+  closeButton.removeEventListener('click', handleFormClosing);
   document.removeEventListener('keydown', handleFormKeydown);
 };
 
+function resetForm() {
+  form.reset();
+  removeEffect(picture);
+  setScaleDefaultValue();
+  setPictureTransform(1);
+  removeFormListeners();
+}
+
 const initUploadModule = () => {
   uploadInput.addEventListener('change', () => {
-    picturePreview(uploadInput);
+    setPicture(uploadInput);
     setScaleDefaultValue();
     showModal(uploadModal, addFormListeners);
   });
