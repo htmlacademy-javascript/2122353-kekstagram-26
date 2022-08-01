@@ -1,8 +1,10 @@
 import { getDataFromApi } from './api.js';
-import {drawItemPicture } from './picture.js';
+import { drawItemPicture } from './picture.js';
 import { initUploadModule } from './upload-form.js';
 import { setScaleDefaultValue } from './picture-effects.js';
 import { initEvents } from './events.js';
+import { showErrorModal } from './no-data-error.js';
+
 
 (async () => {
   try {
@@ -19,20 +21,7 @@ import { initEvents } from './events.js';
     initUploadModule();
     initEvents(posts);
   } catch (err) {
-    const errorTemplate = document.querySelector('#error').content.querySelector('.error');
-    const element = errorTemplate.cloneNode(true);
-    const button = element.querySelector('.error__button');
-
-    const handleButtonClick = () => {
-      document.body.querySelector('.error').remove();
-      button.removeEventListener('click', handleButtonClick);
-    };
-
-    element.querySelector('.error__title').textContent = 'Ошибка загрузки данных';
-    button.textContent = 'Закрыть';
-
-    button.addEventListener('click', handleButtonClick);
-    document.body.appendChild(element);
+    showErrorModal();
   }
 })();
 

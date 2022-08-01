@@ -6,13 +6,14 @@ const getDataFromApi = async () =>  {
     headers: config.getData.headers,
     cors: 'no-cors'
   });
+
   if (response.status === 200) {
     return response.json();
   }
-  const error = await response.json();
-  const e = new Error('Something went wrong');
-  e.data = error;
-  throw e;
+
+  const error = new Error('Something went wrong');
+  error.data = await response.json();
+  throw error;
 };
 
 const sendFormDataToApi = (formData, onSuccess, onError) => {

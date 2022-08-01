@@ -9,28 +9,28 @@ import {
 const initEvents = (posts) => {
   let pictureElement;
 
-  const onModalOpen = () => {
-    document.body.addEventListener('keydown', handleKeydown);
-  };
-
-  const onModalClose = () => {
-    document.body.removeEventListener('keydown', handleKeydown);
-  };
-
   const handleKeydown = (evt) => {
     if (evt.key === 'Escape') {
-      closeModal(pictureElement.querySelector('.big-picture'), onModalClose);
+      closeModal(pictureElement.querySelector('.big-picture'), removeListener);
     }
+  };
+
+  function removeListener() {
+    document.body.removeEventListener('keydown', handleKeydown);
+  }
+
+  const addListener = () => {
+    document.body.addEventListener('keydown', handleKeydown);
   };
 
   document.body.addEventListener('click', (evt) => {
     if (evt.target.classList.contains('picture__img')) {
       pictureElement = evt.target.parentElement;
-      showModal(pictureElement.querySelector('.big-picture'), onModalOpen);
+      showModal(pictureElement.querySelector('.big-picture'), addListener);
     }
 
     if (evt.target.classList.contains('big-picture__cancel')) {
-      closeModal(pictureElement.querySelector('.big-picture', onModalClose));
+      closeModal(pictureElement.querySelector('.big-picture'), removeListener);
     }
 
     if (evt.target.classList.contains('social__comments-loader')) {
@@ -62,5 +62,6 @@ const initEvents = (posts) => {
     }
   });
 };
+
 
 export { initEvents };
